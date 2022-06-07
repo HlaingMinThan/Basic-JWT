@@ -8,7 +8,7 @@ app.get('/api',(req,res)=>{
         message:'hello'
     });
 });
-app.post('/api/posts',(req,res)=>{
+app.post('/api/posts',checkTokenExists,(req,res)=>{
     //create post and store in database in here
     res.json({
         message:'post created...'
@@ -29,6 +29,18 @@ app.post('/api/login',(req,res)=>{
         });
     })
 });
+
+function checkTokenExists(req,res,next){
+    let bearerToken=req.headers['authorization'];//Bearer <token>
+    //check bearer authorization token included in request
+    if(!bearerToken){
+        return res.status(403).json({
+            'message':'token is required'
+        });
+    }
+    req.token=bearerToken.split(' ')[1]//<token>
+    next()
+}
 
 app.listen('3000',()=>{
     console.log('app is running on 3000 port');
