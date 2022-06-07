@@ -9,7 +9,6 @@ app.get('/api',(req,res)=>{
     });
 });
 app.post('/api/posts',checkTokenExists,(req,res)=>{
-    console.log('hit this line')
     jwt.verify(req.token,SECRET_KEY,(err,decodedPayload)=>{
         if(err){
             return res.status(403).json({
