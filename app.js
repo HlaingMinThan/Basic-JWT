@@ -1,6 +1,6 @@
-const express=require('express');
 const jwt=require('jsonwebtoken');
-
+const SECRET_KEY='secretkey';
+const express=require('express');
 const app=express();
 
 app.get('/api',(req,res)=>{
@@ -9,9 +9,18 @@ app.get('/api',(req,res)=>{
     });
 });
 app.post('/api/posts',checkTokenExists,(req,res)=>{
-    //create post and store in database in here
-    res.json({
-        message:'post created...'
+    console.log('hit this line')
+    jwt.verify(req.token,SECRET_KEY,(err,decodedPayload)=>{
+        if(err){
+            return res.status(403).json({
+                'message':'invalid token'
+            });
+        }
+        //create post and store in database in here
+        res.json({
+            message:'post created...',
+            user:decodedPayload
+        });
     });
 });
 
@@ -23,7 +32,7 @@ app.post('/api/login',(req,res)=>{
         'email':'hlaingminthan92@gmail.com'
     };
 
-    jwt.sign({user},'secretkey',(err,token)=>{
+    jwt.sign({user},SECRET_KEY,(err,token)=>{
         res.json({
             token
         });
